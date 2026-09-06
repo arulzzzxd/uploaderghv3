@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Ultah Nisa (WITA)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background: rgba(30, 41, 59, 0.7);
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: #38bdf8;
+        }
+        p.subtitle {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+        .nisa-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #f43f5e;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .time-box {
+            background: #0f172a;
+            padding: 10px 4px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        .time-box span {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #f43f5e;
+        }
+        .time-box label {
+            font-size: 0.65rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .message {
+            font-size: 1rem;
+            color: #e2e8f0;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        .birthday-banner {
+            font-size: 1.4rem;
+            color: #f43f5e;
+            font-weight: bold;
+            line-height: 1.5;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main-container">
+        <!-- Foto dengan nama yang sudah disesuaikan -->
+        <img src="172652.jpg" alt="Foto Nisa" class="nisa-photo">
+        
+        <h1 id="main-title">Menuju Ulang Tahun Nisa 🎂</h1>
+        <p class="subtitle" id="subtitle-date">Zona Waktu: WITA (GMT+8)</p>
+        
+        <div id="countdown-section">
+            <div class="countdown-grid">
+                <div class="time-box">
+                    <span id="days">00</span>
+                    <label>Hari</label>
+                </div>
+                <div class="time-box">
+                    <span id="hours">00</span>
+                    <label>Jam</label>
+                </div>
+                <div class="time-box">
+                    <span id="minutes">00</span>
+                    <label>Menit</label>
+                </div>
+                <div class="time-box">
+                    <span id="seconds">00</span>
+                    <label>Detik</label>
+                </div>
+            </div>
+            <div class="message" id="message">Menghitung detik menuju hari spesial! ✨</div>
+        </div>
+    </div>
+
+    <script>
+        function getWitaYear() {
+            const options = { timeZone: 'Asia/Makassar', year: 'numeric' };
+            return parseInt(new Intl.DateTimeFormat('en-US', options).format(new Date()));
+        }
+
+        function updateCountdown() {
+            let witaYear = getWitaYear();
+            
+            let targetTimestamp = Date.UTC(witaYear, 1, 20, 16, 0, 0);
+            let endBirthdayTimestamp = Date.UTC(witaYear, 1, 21, 15, 59, 59);
+
+            let now = Date.now();
+
+            if (now > endBirthdayTimestamp) {
+                witaYear += 1;
+                targetTimestamp = Date.UTC(witaYear, 1, 20, 16, 0, 0);
+                endBirthdayTimestamp = Date.UTC(witaYear, 1, 21, 15, 59, 59);
+            }
+
+            const container = document.getElementById('main-container');
+
+            if (now >= targetTimestamp && now <= endBirthdayTimestamp) {
+                container.innerHTML = `
+                    <img src="IMG-20260905-WA0042.jpg" alt="Foto Nisa" class="nisa-photo">
+                    <div class="birthday-banner">
+                        🎉 SELAMAT ULANG TAHUN NISA! 🥳<br>
+                        <span style="font-size: 1rem; color: #38bdf8; font-weight: normal;">Semoga panjang umur, sehat selalu, dan bahagia selalu! 🌟</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const diff = targetTimestamp - now;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = String(days).padStart(2, '0');
+            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
