@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>X PPLG 2 | SKANSAR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07070c;
+      --bg-card: #111118;
+      --bg-card-hover: #18181f;
+      --accent: #6c5ce7;
+      --accent-2: #00cec9;
+      --accent-3: #fd79a8;
+      --text: #f5f5f7;
+      --text-muted: #a0a0b0;
+      --border: rgba(255,255,255,0.08);
+      --glow: 0 0 40px rgba(108, 92, 231, 0.35);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    .bg-grid {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(108, 92, 231, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108, 92, 231, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
+    }
+    .blob {
+      position: fixed; border-radius: 50%;
+      filter: blur(100px); opacity: 0.35;
+      pointer-events: none; z-index: 0;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--accent); top: -150px; left: -100px; animation: float 12s ease-in-out infinite; }
+    .blob-2 { width: 400px; height: 400px; background: var(--accent-2); bottom: 10%; right: -100px; animation: float 15s ease-in-out infinite reverse; }
+    .blob-3 { width: 300px; height: 300px; background: var(--accent-3); top: 50%; left: 40%; animation: float 18s ease-in-out infinite; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      33% { transform: translate(30px, -40px); }
+      66% { transform: translate(-20px, 20px); }
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+      background: rgba(7, 7, 12, 0.75); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); transition: all 0.3s ease;
+    }
+    nav.scrolled { padding: 0.7rem 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    .logo {
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.35rem;
+      letter-spacing: -0.5px; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .logo span {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .nav-links { display: flex; gap: 1.6rem; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.95rem;
+      transition: color 0.25s; position: relative;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.3s;
+    }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .menu-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+    .hero {
+      position: relative; min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; text-align: center; padding: 6rem 1.5rem 4rem; z-index: 1;
+    }
+    .hero-content { max-width: 800px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(108, 92, 231, 0.15); border: 1px solid rgba(108, 92, 231, 0.3);
+      color: #a29bfe; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.85rem;
+      font-weight: 500; margin-bottom: 1.5rem; animation: fadeUp 0.8s ease both;
+    }
+    .badge::before {
+      content: ''; width: 8px; height: 8px; background: var(--accent-2);
+      border-radius: 50%; box-shadow: 0 0 10px var(--accent-2); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.8rem, 8vw, 4.8rem);
+      font-weight: 700; line-height: 1.1; margin-bottom: 1rem; animation: fadeUp 0.8s 0.1s ease both;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p {
+      font-size: 1.2rem; color: var(--text-muted); max-width: 520px;
+      margin: 0 auto 2.5rem; animation: fadeUp 0.8s 0.2s ease both;
+    }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.8s 0.3s ease both; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.9rem 1.8rem;
+      border-radius: 12px; font-weight: 600; font-size: 1rem; text-decoration: none;
+      transition: all 0.3s ease; cursor: pointer; border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #5a4bd1); color: white;
+      box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(108, 92, 231, 0.55); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); transform: translateY(-3px); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    section { position: relative; z-index: 1; padding: 5rem 1.5rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 3.5rem; }
+    .section-header .label {
+      display: inline-block; font-size: 0.8rem; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent-2); margin-bottom: 0.75rem;
+    }
+    .section-header h2 {
+      font-family: 'Space Grotesk', sans-serif; font-size: clamp(1.9rem, 4vw, 2.6rem);
+      font-weight: 700; margin-bottom: 0.75rem;
+    }
+    .section-header p { color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+    .wali-card {
+      max-width: 480px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden; transition: all 0.4s ease; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+    .wali-card:hover { transform: translateY(-8px); box-shadow: var(--glow); border-color: rgba(108, 92, 231, 0.4); }
+    .wali-img { width: 100%; height: 320px; object-fit: cover; display: block; }
+    .wali-info { padding: 1.75rem; text-align: center; }
+    .wali-info h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; margin-bottom: 0.3rem; }
+    .wali-info .role { color: var(--accent-2); font-weight: 500; font-size: 0.95rem; margin-bottom: 1rem; }
+    .wali-info p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* STRUKTUR ORGANISASI */
+    .org-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem; max-width: 1000px; margin: 0 auto;
+    }
+    .org-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
+      padding: 1.75rem 1.5rem; text-align: center; transition: all 0.35s ease;
+      position: relative; overflow: hidden;
+    }
+    .org-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2)); opacity: 0; transition: opacity 0.3s;
+    }
+    .org-card:hover { transform: translateY(-8px); border-color: rgba(108, 92, 231, 0.45); box-shadow: 0 15px 40px rgba(108, 92, 231, 0.2); }
+    .org-card:hover::before { opacity: 1; }
+    .org-card.leader {
+      grid-column: 1 / -1; max-width: 320px; margin: 0 auto 0.5rem;
+      background: linear-gradient(145deg, rgba(108, 92, 231, 0.12), rgba(0, 206, 201, 0.08));
+      border-color: rgba(108, 92, 231, 0.35);
+    }
+    .org-icon {
+      width: 56px; height: 56px; margin: 0 auto 1rem; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+      box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35);
+    }
+    .org-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; margin-bottom: 0.35rem; font-weight: 600; }
+    .org-card .position { color: var(--accent-2); font-size: 0.9rem; font-weight: 500; margin-bottom: 0.6rem; }
+    .org-card .name { color: var(--text-muted); font-size: 0.95rem; }
+
+    .filter-bar { display: flex; justify-content: center; gap: 0.75rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 0.5rem 1.2rem; border-radius: 50px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-muted); font-family: inherit; font-size: 0.9rem;
+      font-weight: 500; cursor: pointer; transition: all 0.25s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: rgba(108, 92, 231, 0.2); border-color: var(--accent); color: var(--text);
+    }
+    .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
+    .member-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px;
+      overflow: hidden; transition: all 0.35s ease; cursor: pointer; position: relative;
+    }
+    .member-card:hover {
+      transform: translateY(-8px) scale(1.02); border-color: rgba(108, 92, 231, 0.5);
+      box-shadow: 0 15px 40px rgba(108, 92, 231, 0.25);
+    }
+    .member-img-wrap { position: relative; overflow: hidden; aspect-ratio: 1; }
+    .member-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .member-card:hover .member-img { transform: scale(1.1); }
+    .member-overlay {
+      position: absolute; inset: 0; background: linear-gradient(to top, rgba(7,7,12,0.9) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.3s; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1rem;
+    }
+    .member-card:hover .member-overlay { opacity: 1; }
+    .member-overlay span { font-size: 0.8rem; background: rgba(108, 92, 231, 0.8); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    .member-info { padding: 1rem; text-align: center; }
+    .member-info h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .member-info .absen { font-size: 0.8rem; color: var(--text-muted); }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+    .gallery-item { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; border: 1px solid var(--border); }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-caption {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 1.25rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+      transform: translateY(10px); opacity: 0; transition: all 0.3s ease;
+    }
+    .gallery-item:hover .gallery-caption { transform: translateY(0); opacity: 1; }
+    .gallery-caption h4 { font-size: 1rem; margin-bottom: 0.2rem; }
+    .gallery-caption p { font-size: 0.8rem; color: var(--text-muted); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin-top: 4rem; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.75rem 1.5rem; text-align: center; transition: all 0.3s;
+    }
+    .stat-card:hover { border-color: rgba(108, 92, 231, 0.4); transform: translateY(-4px); }
+    .stat-card .number {
+      font-family: 'Space Grotesk', sans-serif; font-size: 2.4rem; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.2;
+    }
+    .stat-card .label { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem; }
+    footer {
+      position: relative; z-index: 1; padding: 3rem 1.5rem; text-align: center;
+      border-top: 1px solid var(--border); background: rgba(0,0,0,0.3);
+    }
+    footer p { color: var(--text-muted); font-size: 0.9rem; }
+    footer .heart { color: var(--accent-3); }
+    .lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 999;
+      display: none; align-items: center; justify-content: center; padding: 2rem; cursor: zoom-out;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img { max-width: 90%; max-height: 90vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); object-fit: contain; }
+    .lightbox-close {
+      position: absolute; top: 1.5rem; right: 1.5rem; background: rgba(255,255,255,0.1);
+      border: none; color: white; width: 44px; height: 44px; border-radius: 50%; font-size: 1.5rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+    /* MUSIC BUTTON */
+    #musicBtn {
+      position: fixed; bottom: 28px; right: 28px; width: 54px; height: 54px; border-radius: 50%;
+      border: none; background: linear-gradient(135deg, var(--accent), #5a4bd1); color: white;
+      font-size: 1.4rem; cursor: pointer; z-index: 200; box-shadow: 0 6px 25px rgba(108, 92, 231, 0.5);
+      transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+    }
+    #musicBtn:hover { transform: scale(1.1); box-shadow: 0 8px 30px rgba(108, 92, 231, 0.65); }
+    #musicBtn.playing { animation: musicPulse 1.5s ease-in-out infinite; }
+    @keyframes musicPulse {
+      0%, 100% { box-shadow: 0 6px 25px rgba(108, 92, 231, 0.5); }
+      50% { box-shadow: 0 6px 35px rgba(0, 206, 201, 0.6); }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none; position: absolute; top: 100%; left: 0; right: 0;
+        background: rgba(7, 7, 12, 0.95); backdrop-filter: blur(20px);
+        flex-direction: column; padding: 1.5rem; gap: 1rem; border-bottom: 1px solid var(--border);
+      }
+      .nav-links.open { display: flex; }
+      .menu-toggle { display: block; }
+      .members-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .org-card.leader { max-width: 100%; }
+      #musicBtn { bottom: 20px; right: 20px; width: 48px; height: 48px; font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <nav id="navbar">
+    <div class="logo"><span>X PPLG 2</span> · SKANSAR</div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#beranda" class="active">Beranda</a></li>
+      <li><a href="#wali">Wali Kelas</a></li>
+      <li><a href="#struktur">Struktur</a></li>
+      <li><a href="#anggota">Anggota</a></li>
+      <li><a href="#momen">Momen</a></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+  </nav>
+
+  <section class="hero" id="beranda">
+    <div class="hero-content">
+      <div class="badge">Kelas Unggulan · Tahun Ajaran 2026/2027</div>
+      <h1>Selamat Datang di<br><span class="highlight">X PPLG 2</span></h1>
+      <p>Kelas Software Development & Games yang solid, kreatif, dan penuh semangat. Bersama-sama kita membangun masa depan digital.</p>
+      <div class="hero-btns">
+        <a href="#anggota" class="btn btn-primary">Lihat Anggota →</a>
+        <a href="#momen" class="btn btn-outline">Galeri Momen</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="wali">
+    <div class="container">
+      <div class="section-header">
+        <div class="label">Pembimbing</div>
+        <h2>Wali Kelas</h2>
+        <p>Sosok inspiratif yang membimbing perjalanan kami di X PPLG 2</p>
+      </div>
+      <div class="wali-card">
+        <img src="https://6a711add693c048900ae311a.imgix.net/sandbox/BeautyPlus%20Galaxy_20260805223047252_save.jpg" alt="Wali Kelas" class="wali-img" />
+        <div class="wali-info">
+          <h3>Pebi Pebriansyah, S.Kom</h3>
+          <div class="role">Wali Kelas X PPLG 2</div>
+          <p>"Belajar bukan hanya soal nilai, tapi tentang proses menjadi versi terbaik dari diri sendiri."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRUKTUR ORGANISASI -->
+  <section id="struktur">
+    <div class="container">
+      <div class="section-header">
+        <div class="label">Kepengurusan</div>
+        <h2>Struktur Organisasi Kelas</h2>
+        <p>Pengurus yang siap memimpin dan melayani seluruh anggota X PPLG 2</p>
+      </div>
+      <div class="org-grid">
+        <div class="org-card leader">
+          <div class="org-icon">👑</div>
+          <h3>Ketua Kelas</h3>
+          <div class="position">Leader</div>
+          <div class="name">Bimbim Dwi Saputra</div>
+        </div>
+        <div class="org-card">
+          <div class="org-icon">⚡</div>
+          <h3>Wakil Ketua</h3>
+          <div class="position">Co-Leader</div>
+          <div class="name">Reva Destiara</div>
+        </div>
+        <div class="org-card">
+          <div class="org-icon">📝</div>
+          <h3>Sekretaris</h3>
+          <div class="position">Secretary</div>
+          <div class="name">Raihana Meisa Putri</div>
+          <div class="name">Firza Rahma Aulia</div>
+        </div>
+        <div class="org-card">
+          <div class="org-icon">💰</div>
+          <h3>Bendahara</h3>
+          <div class="position">Treasurer</div>
+          <div class="name">Putri Hadry Yati</div>
+          <div class="name">Aliska Dwi Afifah</div>
+        </div>
+        <div class="org-card">
+          <div class="org-icon">🛡️</div>
+          <h3>Seksi Keamanan</h3>
+          <div class="position">Security</div>
+          <div class="name">Syaifudin Zhafran Priyatama</div>
+        </div>
+        <div class="org-card">
+          <div class="org-icon">🧹</div>
+          <h3>Seksi Kebersihan</h3>
+          <div class="position">Hygiene</div>
+          <div class="name">Febri Nurdianto</div>
+          <div class="name">Tea Desti Wardani A.</div>
+        </div>
+        <div class="org-card">
+          <div class="org-icon">🏃</div>
+          <h3>Seksi Olahraga</h3>
+          <div class="position">Sport</div>
+          <div class="name">Satria Fandika Delvian</div>
+          <div class="name">Oktaviana Milatun Azizah</div>
+        </div>
+        <div class="org-card">
+          <div class="org-icon">🕌</div>
+          <h3>Seksi Keagamaan</h3>
+          <div class="position">Religious</div>
+          <div class="name">Valdis Munif Musyaffa</div>
+          <div class="name">Raihana Meisa Putry</div>
+        </div>
+          <div class="org-card">
+          <div class="org-icon">🫱🏻‍🫲🏻</div>
+          <h3>Hubungan Masyarakat</h3>
+            <div class="position">Public Relations</div>
+            <div class="name">Nizam Bayu Setiawan</div>
+            <div class="name">Bening Salsabil</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="anggota">
+    <div class="container">
+      <div class="section-header">
+        <div class="label">Tim</div>
+        <h2>Anggota Kelas</h2>
+        <p>36 jiwa yang saling mendukung dan tumbuh bersama</p>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">Semua</button>
+        <button class="filter-btn" data-filter="laki">Laki-laki</button>
+        <button class="filter-btn" data-filter="perempuan">Perempuan</button>
+      </div>
+      <div class="members-grid" id="membersGrid"></div>
+      <div class="stats">
+        <div class="stat-card"><div class="number">36</div><div class="label">Total Siswa</div></div>
+        <div class="stat-card"><div class="number">14</div><div class="label">Laki-laki</div></div>
+        <div class="stat-card"><div class="number">22</div><div class="label">Perempuan</div></div>
+        <div class="stat-card"><div class="number">1</div><div class="label">Wali Kelas</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="momen">
+    <div class="container">
+      <div class="section-header">
+        <div class="label">Kenangan</div>
+        <h2>Foto Bersama & Momen</h2>
+        <p>Setiap momen adalah cerita yang layak dikenang</p>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Dibuat dengan <span class="heart">♥</span> oleh X PPLG 2 SKANSAR · 2026/2027</p>
+  </footer>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">×</button>
+    <img src="" alt="Preview" id="lightboxImg" />
+  </div>
+
+  <!-- MUSIC PLAYER -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://mp3tourl.com/audio/1787287549398-34956fa0-0d3a-47c4-846a-5ffbb7fef3d0.mp3" type="audio/mpeg">
+  </audio>
+  <button id="musicBtn" title="Putar / Pause Musik">🔇</button>
+
+  <script>
+    // MUSIC
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    let isPlaying = false;
+    music.volume = 0.4;
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        musicBtn.innerHTML = '🔇';
+        musicBtn.classList.remove('playing');
+        isPlaying = false;
+      } else {
+        music.play().then(() => {
+          musicBtn.innerHTML = '🔊';
+          musicBtn.classList.add('playing');
+          isPlaying = true;
+        }).catch(() => { musicBtn.innerHTML = '🔇'; });
+      }
+    }
+    musicBtn.addEventListener('click', toggleMusic);
+    window.addEventListener('load', () => {
+      music.play().then(() => {
+        isPlaying = true;
+        musicBtn.innerHTML = '🔊';
+        musicBtn.classList.add('playing');
+      }).catch(() => {
+        isPlaying = false;
+        musicBtn.innerHTML = '🔇';
+      });
+    });
+
+    // DATA
+    const students = [
+      { name: "Aira Pungki I.", absen: 1, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0059.jpg" },
+      { name: "Aisya Nasywadiya Rahadianti", absen: 2, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0056.jpg" },
+      { name: "Aliska Dwi Afifah", absen: 3, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0050.jpg" },
+      { name: "Alya Naezila", absen: 4, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0089.jpg" },
+      { name: "Arum Anifah", absen: 5, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260805-WA0007.jpg" },
+      { name: "Bening Salsabil", absen: 6, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0053.jpg" },
+      { name: "Bimbin Dwi Saputra", absen: 7, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0037.jpg" },
+      { name: "Chilmi Naela Maghfiroh", absen: 8, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0050.jpg" },
+      { name: "Erlan Budi Febriansyah", absen: 9, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0039.jpg" },
+      { name: "Evlin Tri Wahyuni", absen: 10, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0051.jpg" },
+      { name: "Faebirul Nur Maulida", absen: 11, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0012.jpg" },
+      { name: "Fa'i Attourohman", absen: 12, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0042.jpg" },
+      { name: "Fallen Ika Putri", absen: 13, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0062.jpg" },
+      { name: "Faqih Lintang Sedayu", absen: 14, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0061.jpg" },
+      { name: "Faza Rauf Azzakka", absen: 15, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0031.jpg" },
+      { name: "Febri Nurdianto", absen: 16, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/VideoCapture_20250507-201041.jpg" },
+      { name: "Firza Rahma Aulia", absen: 17, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0030.jpg" },
+      { name: "Karunia", absen: 18, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260805-WA0006.jpg" },
+      { name: "Kela Anggraeni", absen: 19, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0052.jpg" },
+      { name: "Nizam Bayu Setiawan", absen: 20, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0047.jpg" },
+      { name: "Oktaviana Milatun Azizah", absen: 21, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0054.jpg" },
+      { name: "Puspa Dea M.", absen: 22, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0094.jpg" },
+      { name: "Putri Hadry Yati", absen: 23, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0029.jpg" },
+      { name: "Raihana Meisa Putri", absen: 24, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0033.jpg" },
+      { name: "Refky Praditya Ardana", absen: 25, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260807-WA0023.jpg" },
+      { name: "Restati Aprilina Ledis", absen: 26, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0013.jpg" },
+      { name: "Reva Destiara", absen: 27, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0056.jpg" },
+      { name: "Rifki", absen: 28, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0073.jpg" },
+      { name: "Rilo Pambudi", absen: 29, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0048.jpg" },
+      { name: "Rizky Bakhtiar", absen: 30, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260808-WA0054.jpg" },
+      { name: "Satria Fandika Delvian", absen: 31, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/motion_photo_1085628068450870214.jpg" },
+      { name: "Sintia eka meliani", absen: 32, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260809-WA0009.jpg" },
+      { name: "Syaifudin zhafran priyatama", absen: 33, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260811-WA0134.jpg" },
+      { name: "Tea Desti Wardani A.", absen: 34, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0055.jpg" },
+      { name: "Valdis Munif Musyaffa", absen: 35, gender: "laki", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260805-WA0063.jpg" },
+      { name: "Velysa elys", absen: 36, gender: "perempuan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260804-WA0072.jpg" },
+    ];
+
+    const moments = [
+      { title: "Foto Bersama Kelas", desc: "Momen kebersamaan X PPLG 2", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/IMG-20260720-WA0006.jpg" },
+      { title: "Praktikum Coding", desc: "Belajar web development bersama", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/depositphotos_142277206-stock-illustration-padlock-security-system-technology.jpg" },
+      { title: "Outing Class", desc: "Liburan seru di luar sekolah", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/depositphotos_142277206-stock-illustration-padlock-security-system-technology.jpg" },
+      { title: "Presentasi Project", desc: "Showcase hasil karya siswa", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/depositphotos_142277206-stock-illustration-padlock-security-system-technology.jpg" },
+      { title: "Ulang Tahun Kelas", desc: "Merayakan kebersamaan", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/depositphotos_142277206-stock-illustration-padlock-security-system-technology.jpg" },
+      { title: "Study Tour", desc: "Kunjungan industri & inspirasi", photo: "https://6a711add693c048900ae311a.imgix.net/sandbox/depositphotos_142277206-stock-illustration-padlock-security-system-technology.jpg" },
+    ];
+
+    const membersGrid = document.getElementById('membersGrid');
+    function renderMembers(filter = 'all') {
+      membersGrid.innerHTML = '';
+      const filtered = filter === 'all' ? students : students.filter(s => s.gender === filter);
+      filtered.forEach(student => {
+        const card = document.createElement('div');
+        card.className = 'member-card';
+        card.innerHTML = `
+          <div class="member-img-wrap">
+            <img src="${student.photo}" alt="${student.name}" class="member-img" loading="lazy" />
+            <div class="member-overlay"><span>Absen ${student.absen}</span></div>
+          </div>
+          <div class="member-info">
+            <h4>${student.name}</h4>
+            <div class="absen">No. Absen ${student.absen}</div>
+          </div>`;
+        card.addEventListener('click', () => openLightbox(student.photo));
+        membersGrid.appendChild(card);
+      });
+    }
+    renderMembers();
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderMembers(btn.dataset.filter);
+      });
+    });
+
+    const galleryGrid = document.getElementById('galleryGrid');
+    moments.forEach(m => {
+      const item = document.createElement('div');
+      item.className = 'gallery-item';
+      item.innerHTML = `<img src="${m.photo}" alt="${m.title}" loading="lazy" /><div class="gallery-caption"><h4>${m.title}</h4><p>${m.desc}</p></div>`;
+      item.addEventListener('click', () => openLightbox(m.photo));
+      galleryGrid.appendChild(item);
+    });
+
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+    function openLightbox(src) {
+      lightboxImg.src = src;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    const navbar = document.getElementById('navbar');
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 50));
+    menuToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+    const sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        if (scrollY >= section.offsetTop - 100) current = section.getAttribute('id');
+      });
+      document.querySelectorAll('.nav-links a').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    });
+  </script>
+</body>
+</html>
